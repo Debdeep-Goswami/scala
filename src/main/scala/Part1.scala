@@ -33,19 +33,19 @@ object Part1 extends App {
 
   //  Frequency of every token
   val count: Map[String, Int] = lower.groupBy(k => k).view.mapValues(_.length).toMap
-//  println(count)
+  //  println(count)
 
   //  Max Frequency token
-  val n = count.maxBy{
+  val n = count.maxBy {
     case (token, freq) => freq
   }
   println(n)
 
-//  println(count.maxBy(_._2))
+  //  println(count.maxBy(_._2))
 
 
   //  Second Minimum element from a list
-  val element = List(1, 4, 3, 2, 5, 6, 10, 9, 8)
+//  val element = List(1, 4, 3, 2, 5, 6, 10, 9, 8)
   //  @tailrec
   //  def findSecondMin(element:List[Int],min:Int): Int ={
   //    if(element.length==1) {
@@ -81,32 +81,36 @@ object Part1 extends App {
     }
   }
 
+  val element = List(11, 4, 3, 2, 5, 6, 10, 9, 8)
   @tailrec
-  def findSecondMin(element: List[Int], min: Int, second: Int): Int = {
-    if (element.isEmpty) min
-    else {
-      findSecondMin(element.tail, Math.min(min, element.head), min)
+  def findSecondMin(element: List[Int], min: Option[Int], secMin: Option[Int]): Option[Int] = {
+    element.headOption match {
+      case None => secMin
+      case Some(x) => (min, secMin) match {
+        case (None, None) => findSecondMin(element.tail, Some(x), None)
+        case (None, Some(_)) => None
+        case (Some(m), None) => findSecondMin(element.tail, Some(Math.min(x, m)), Some(Math.max(x, m)))
+        case (Some(m), Some(s)) =>
+          if (x < m) {
+            val newM = x;
+            val newS = m
+            findSecondMin(element.tail, Some(newM), Some(newS))
+          } else if (x < s) {
+            val newM = m;
+            val newS = x
+            findSecondMin(element.tail, Some(newM), Some(newS))
+          }else findSecondMin(element.tail,Some(m),Some(s))
+      }
     }
   }
-
-  @tailrec
-  def find(element: List[Int], m: Int, s: Int): Unit = {
-    if (element.isEmpty) m
-    else {
-      find(element.tail, Math.min(m, element.head), Math.max(m, element.head))
-    }
-  }
-
-//  def findSecondMin(element: List[Int], min: Option[Int], secMin: Option[Int]): Option[Int] ={
-////    element.headOption match {
-////      case (None,None) => None
-////
-////    }
-//  }
 
   //  println(findMin(element, None))
   //  println(findMinV2(element, None))
   //  println(findSecondMin(element, Integer.MAX_VALUE, Integer.MAX_VALUE))
   //  println(find(element, Integer.MAX_VALUE, Integer.MAX_VALUE))
+//  var tpl = ("Sugar", 25)
+//  println(tpl._1)
+  //  println(tpl(1))
+  println(findSecondMin(element,None,None))
 }
 
